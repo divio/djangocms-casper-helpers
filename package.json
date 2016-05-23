@@ -1,0 +1,35 @@
+{
+  "name": "djangocms-casper-helpers",
+  "version": "1.0.3",
+  "description": "Helpers for writing CasperJS integration tests",
+  "main": "index.js",
+  "scripts": {
+    "test": "eslint *.js"
+  },
+  "keywords": [
+    "django",
+    "cms",
+    "casperjs"
+  ],
+  "author": "Vadim Sikora <vadim.sikora@divio.com>",
+  "license": "MIT",
+  "dependencies": {
+    "casperjs": "1.1.1",
+    "phantomjs-prebuilt": "^2.1.7",
+    "bluebird": "^3.3.4",
+    "lodash": "^4.8.2",
+    "minimist": "1.1.1",
+    "terminate": "^1.0.8"
+  },
+  "devDependencies": {
+    "eslint": "^2.10.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/divio/djangocms-casper-helpers.git"
+  },
+  "bugs": {
+    "url": "https://github.com/divio/djangocms-casper-helpers/issues"
+  },
+  "homepage": "https://github.com/divio/djangocms-casper-helpers#readme"
+}
