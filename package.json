@@ -14,7 +14,7 @@
   "author": "Vadim Sikora <vadim.sikora@divio.com>",
   "license": "MIT",
   "dependencies": {
-    "casperjs": "1.1.1",
+    "casperjs": "1.1.0-beta5",
     "phantomjs-prebuilt": "^2.1.7",
     "bluebird": "^3.3.4",
     "lodash": "^4.8.2",
