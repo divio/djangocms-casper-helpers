@@ -1,6 +1,12 @@
+==== 1.1.0 (2016-05-25) ====
+
+- Added "getXPathForAdminSection"
+
+
 ==== 1.0.4 (2016-05-24) ====
 
 - Revert casperjs version to 1.1.0-beta5
+
 
 ==== 1.0.3 (2016-05-22) ====
 
