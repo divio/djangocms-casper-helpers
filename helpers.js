@@ -649,6 +649,30 @@ module.exports = function (casperjs, settings) {
                 xpath += '[contains(@data-id, "' + opts.pageId + '")]';
             }
             return xpath;
+        },
+
+        /**
+         * Returns xpath expression to the specific row in the admin.
+         * Can also be used to find xpath to specific links in that row.
+         *
+         * @function getXPathForAdminSection
+         * @param {Object} options
+         * @param {String} options.section module name, e.g. Django CMS
+         * @param {String} options.row module row, e.g Pages, Users
+         * @param {String} [options.link] specific link in the row, e.g "Add" or "Change"
+         * @returns {String}
+         */
+        getXPathForAdminSection: function getXPathForAdminSection(options) {
+            var xpath = '//div[.//caption/a[contains(text(), "' + options.section + '")]]';
+
+            if (options.link) {
+                xpath += '//th[./a[contains(text(), "' + options.row + '")]]';
+                xpath += '/following-sibling::td/a[contains(text(), "' + options.link + '")]';
+            } else {
+                xpath += '//th/a[contains(text(), "' + options.row + '")]';
+            }
+
+            return xpath;
         }
     };
 };
