@@ -336,10 +336,10 @@ module.exports = function (casperjs, settings) {
                         } else {
                             // get full selector (css3, not jquery) of the closest placeholder
                             parentSelector = this.evaluate(function (selector) {
-                                return $(selector).closest('.cms-dragarea').parentsUntil('body')
+                                return CMS.$(selector).closest('.cms-dragarea').parentsUntil('body')
                                     .andSelf()
                                     .map(function () {
-                                        return this.nodeName + ':nth-child(' + ($(this).index() + 1) + ')';
+                                        return this.nodeName + ':nth-child(' + (CMS.$(this).index() + 1) + ')';
                                     }).get().join('>');
                             }, opts.parent);
 
@@ -528,7 +528,7 @@ module.exports = function (casperjs, settings) {
             // weirdly with single key objects https://github.com/n1k0/casperjs/issues/353
             return casper.evaluate(function (anchorTitle) {
                 return CMS.$('.jstree-anchor').map(function () {
-                    var anchor = $(this);
+                    var anchor = CMS.$(this);
 
                     if (anchor.text().trim() === anchorTitle) {
                         return anchor.parent().data('id');
