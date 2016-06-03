@@ -1,3 +1,8 @@
+==== 1.1.1 (2016-06-03) ====
+
+- Use namespaced CMS jQuery
+
+
 ==== 1.1.0 (2016-05-25) ====
 
 - Added "getXPathForAdminSection"
