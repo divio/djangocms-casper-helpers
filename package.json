@@ -4,7 +4,7 @@
   "description": "Helpers for writing CasperJS integration tests",
   "main": "index.js",
   "scripts": {
-    "test": "eslint *.js"
+    "test": "eslint ."
   },
   "keywords": [
     "django",
@@ -14,11 +14,12 @@
   "author": "Vadim Sikora <vadim.sikora@divio.com>",
   "license": "MIT",
   "dependencies": {
-    "casperjs": "1.1.0-beta5",
-    "phantomjs-prebuilt": "^2.1.7",
     "bluebird": "^3.3.4",
+    "casperjs": "1.1.0-beta5",
     "lodash": "^4.8.2",
     "minimist": "1.1.1",
+    "phantomjs-prebuilt": "^2.1.7",
+    "portfinder": "^1.0.3",
     "terminate": "^1.0.8"
   },
   "devDependencies": {

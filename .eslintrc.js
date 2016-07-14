@@ -108,7 +108,7 @@ module.exports = {
         "no-warning-comments": 0,
         "no-with": 2,
         "radix": 2,
-        "vars-on-top": 2,
+        "vars-on-top": 0,
         "wrap-iife": [2, "inside"],
         "yoda": [2, "never", { "exceptRange": true }],
 
