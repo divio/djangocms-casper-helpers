@@ -6,6 +6,7 @@ var _ = require('lodash');
 var path = require('path');
 var child_process = require('child_process');
 var spawn = require('child_process').spawn;
+var portfinder = require('portfinder');
 
 module.exports = function (options) {
     var INTEGRATION_TESTS = options.tests;
@@ -13,6 +14,7 @@ module.exports = function (options) {
     var logger = options.logger;
     var pathToPhantom = options.pathToPhantom || require('phantomjs-prebuilt').path;
     var pathToCasper = options.pathToCasper || path.join(__dirname, '..', 'node_modules/.bin/casperjs');
+    var serverPort = 8000;
 
     var integrationTests = {
         /**
@@ -32,22 +34,35 @@ module.exports = function (options) {
                     resolve(false);
                     return;
                 }
-                var server = spawn('python', options.serverCommand.split(' ').concat(args.split(' ')));
 
-                logger('Starting a server');
-                server.stdout.on('data', function (data) {
-                    // eslint-disable-next-line
-                    console.log(data.toString().slice(0, -1));
-                });
+                portfinder.basePort = serverPort;
 
-                server.stderr.on('data', function (data) {
-                    logger('Server: ', data.toString().slice(0, -1));
-                });
+                portfinder.getPort(function (err, port) {
+                    var server = spawn(
+                        'python',
+                        options.serverCommand
+                            .split(' ')
+                            .concat(args.split(' '))
+                            .concat(['--port=' + port]));
 
-                var sleep = spawn('sleep', ['90']);
+                    logger('\n\nStarting a server on http://localhost:' + port + '\n\n');
 
-                sleep.on('close', function () {
-                    resolve(server.pid);
+                    serverPort = port;
+
+                    server.stdout.on('data', function (data) {
+                        // eslint-disable-next-line
+                        console.log(data.toString().slice(0, -1));
+                    });
+
+                    server.stderr.on('data', function (data) {
+                        logger('Server: ', data.toString().slice(0, -1));
+                    });
+
+                    var sleep = spawn('sleep', ['90']);
+
+                    sleep.on('close', function () {
+                        resolve(server.pid);
+                    });
                 });
             });
         },
@@ -163,7 +178,7 @@ module.exports = function (options) {
             return new Promise(function (resolve) {
                 var casperChild = spawn(
                     pathToCasper,
-                    ['test', '--web-security=no'].concat(tests)
+                    ['test', '--web-security=no', '--server-port=' + serverPort].concat(tests)
                 );
 
                 casperChild.stdout.on('data', function (data) {

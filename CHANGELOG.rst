@@ -1,3 +1,9 @@
+==== 1.2.0 (2016-07-14) ====
+
+- Server now looks for a free port before starting to avoid clashes
+- Exposed current port via settings
+
+
 ==== 1.1.2 (2016-06-09) ====
 
 - Changed ``createJSTreeXPathFromTree`` to start from the root of the tree.

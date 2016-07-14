@@ -4,6 +4,10 @@
 // Global values, used throughout the test suites
 var DEFAULT_PORT = 8000;
 
+if (casper.cli.has('server-port')) {
+    DEFAULT_PORT = casper.cli.get('server-port');
+}
+
 /**
  * @function configure
  * @param {Object} [opts] options
@@ -28,6 +32,7 @@ function configure(opts) {
         adminLogoutUrl: 'http://localhost:' + port + '/en/admin/logout/',
         adminPagesUrl: 'http://localhost:' + port + '/en/admin/cms/page/',
         adminUsersUrl: 'http://localhost:' + port + '/en/admin/auth/user/',
+        port: port,
         credentials: {
             username: 'admin',
             password: 'admin'
