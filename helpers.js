@@ -59,9 +59,9 @@ module.exports = function (casperjs, settings) {
                         }
 
                         return this.then(function () {
-                            this.click('.js-cms-pagetree-options' + data);
+                            this.click('.cms-pagetree-jstree .js-cms-pagetree-options' + data);
                         })
-                        .waitUntilVisible('.cms-pagetree-dropdown-menu-open')
+                        .then(that.waitUntilActionsDropdownLoaded())
                         .then(function () {
                             this.click('.cms-pagetree-jstree [href*="delete"]' + href);
                         });
@@ -77,6 +77,20 @@ module.exports = function (casperjs, settings) {
         },
 
         /**
+         * Waits until page tree actions dropdown is loaded
+         *
+         * @public
+         * @returns {Function}
+         */
+        waitUntilActionsDropdownLoaded: function () {
+            return function () {
+                return this.waitUntilVisible('.cms-pagetree-dropdown-menu-open')
+                    .waitWhileSelector('.cms-pagetree-dropdown-menu-open .cms-pagetree-dropdown-loader')
+                    .wait(200);
+            };
+        },
+
+        /**
          * Opens dropdown and triggers copying a page
          *
          * @public
@@ -85,11 +99,13 @@ module.exports = function (casperjs, settings) {
          * @returns {Function}
          */
         triggerCopyPage: function (opts) {
+            var that = this;
+
             return function () {
                 return this.then(function () {
                     this.click('.js-cms-pagetree-options[data-id="' + opts.page + '"]');
                 })
-                .waitUntilVisible('.cms-pagetree-dropdown-menu-open')
+                .then(that.waitUntilActionsDropdownLoaded())
                 .then(function () {
                     this.mouse.click('.js-cms-tree-item-copy[data-id="' + opts.page + '"]');
                 })
@@ -106,11 +122,13 @@ module.exports = function (casperjs, settings) {
          * @returns {Function}
          */
         triggerCutPage: function (opts) {
+            var that = this;
+
             return function () {
                 return this.then(function () {
                     this.click('.js-cms-pagetree-options[data-id="' + opts.page + '"]');
                 })
-                .waitUntilVisible('.cms-pagetree-dropdown-menu-open')
+                .then(that.waitUntilActionsDropdownLoaded())
                 .then(function () {
                     this.mouse.click('.js-cms-tree-item-copy[data-id="' + opts.page + '"] ~ .js-cms-tree-item-cut');
                 })
@@ -127,11 +145,13 @@ module.exports = function (casperjs, settings) {
          * @returns {Function}
          */
         triggerPastePage: function (opts) {
+            var that = this;
+
             return function () {
                 return this.then(function () {
                     this.click('.js-cms-pagetree-options[data-id="' + opts.page + '"]');
                 })
-                .waitUntilVisible('.cms-pagetree-dropdown-menu-open')
+                .then(that.waitUntilActionsDropdownLoaded())
                 .then(function () {
                     this.mouse.click('.js-cms-tree-item-paste[data-id="' + opts.page + '"]');
                 })
