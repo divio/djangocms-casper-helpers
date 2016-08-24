@@ -1,3 +1,9 @@
+==== 1.3.0 (2016-08-24) ====
+
+- Updated helpers to work with CMS 3.4
+- Added ``waitUntilActionsDropdownLoaded`` method
+
+
 ==== 1.2.0 (2016-07-14) ====
 
 - Server now looks for a free port before starting to avoid clashes
