@@ -1,3 +1,9 @@
+==== 1.4.0 (2017-06-13) ====
+
+- Allowed sleep timeout to be passed as an option
+- Increased default sleep timeout to 2 minutes
+
+
 ==== 1.3.0 (2016-08-24) ====
 
 - Updated helpers to work with CMS 3.4

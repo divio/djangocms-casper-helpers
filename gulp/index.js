@@ -14,6 +14,7 @@ module.exports = function (options) {
     var logger = options.logger;
     var pathToPhantom = options.pathToPhantom || require('phantomjs-prebuilt').path;
     var pathToCasper = options.pathToCasper || path.join(__dirname, '..', 'node_modules/.bin/casperjs');
+    var waitForMigrations = options.waitForMigrations || 120;
     var serverPort = 8000;
 
     var integrationTests = {
@@ -58,7 +59,7 @@ module.exports = function (options) {
                         logger('Server: ', data.toString().slice(0, -1));
                     });
 
-                    var sleep = spawn('sleep', ['90']);
+                    var sleep = spawn('sleep', [waitForMigrations]);
 
                     sleep.on('close', function () {
                         resolve(server.pid);
