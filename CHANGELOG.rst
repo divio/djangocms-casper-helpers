@@ -1,3 +1,10 @@
+==== 2.0.0 (2017-09-21) ====
+
+- deprecated casper-summoner
+- fixed path resolution for casper binary
+- added CMS 3.5 helpers
+
+
 ==== 1.4.0 (2017-06-13) ====
 
 - Allowed sleep timeout to be passed as an option
