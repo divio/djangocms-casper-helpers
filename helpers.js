@@ -91,6 +91,20 @@ module.exports = function (casperjs, settings) {
         },
 
         /**
+         * Waits until content is refreshed
+         *
+         * @public
+         * @returns {Function}
+         */
+        waitUntilContentIsRefreshed: function () {
+            return function () {
+                return this.waitForSelector('.cms-content-reloading')
+                    .waitWhileSelector('.cms-content-reloading')
+                    .wait(1000);
+            };
+        },
+
+        /**
          * Opens dropdown and triggers copying a page
          *
          * @public
@@ -433,19 +447,28 @@ module.exports = function (casperjs, settings) {
          * @returns {Function}
          */
         switchTo: function (view) {
-            var pos;
-
-            if (view === 'structure') {
-                pos = 'first';
-            } else if (view === 'content') {
-                pos = 'last';
-            } else {
-                throw new Error('Invalid arguments passed to cms.switchTo, should be either "structure" or "content"');
-            }
             return function () {
+                if (
+                    view === 'structure' && this.exists('.cms-toolbar-item-cms-mode-switcher .cms-btn-active') ||
+                    view === 'content' && !this.exists('.cms-toolbar-item-cms-mode-switcher .cms-btn-active')
+                ) {
+                    return this.wait(100);
+                }
+
                 return this.waitForSelector('.cms-toolbar-expanded')
                     .then(function () {
-                        this.click('.cms-toolbar-item-cms-mode-switcher .cms-btn:' + pos + '-child');
+                        return this.click('.cms-toolbar-item-cms-mode-switcher .cms-btn');
+                    })
+                    .then(function () {
+                        if (view === 'structure') {
+                            return this.waitForSelector('.cms-structure-content .cms-dragarea');
+                        } else if (view === 'content') {
+                            return this.waitWhileSelector('.cms-structure-mode-structure');
+                        }
+
+                        throw new Error(
+                            'Invalid arguments passed to cms.switchTo, should be either "structure" or "content"'
+                        );
                     });
             };
         },
