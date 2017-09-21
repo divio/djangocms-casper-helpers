@@ -10,10 +10,11 @@ var portfinder = require('portfinder');
 
 module.exports = function (options) {
     var INTEGRATION_TESTS = options.tests;
+    var pathToBin = child_process.execSync('npm bin').toString().trim();
     var argv = options.argv || {};
     var logger = options.logger;
     var pathToPhantom = options.pathToPhantom || require('phantomjs-prebuilt').path;
-    var pathToCasper = options.pathToCasper || path.join(__dirname, '..', 'node_modules/.bin/casperjs');
+    var pathToCasper = options.pathToCasper || path.join(pathToBin, 'casperjs');
     var waitForMigrations = options.waitForMigrations || 120;
     var serverPort = 8000;
 
@@ -177,9 +178,17 @@ module.exports = function (options) {
         */
         runTests: function (tests) {
             return new Promise(function (resolve) {
+                var visual = argv && argv.visual;
+                var visualPort = argv && argv.visualPort || '8002';
+                var params = ['test', '--web-security=no', '--server-port=' + serverPort];
+
+                if (visual) {
+                    params.push('--visual=' + (visual || 10));
+                    params.push('--visual-port=' + visualPort);
+                }
                 var casperChild = spawn(
                     pathToCasper,
-                    ['test', '--web-security=no', '--server-port=' + serverPort].concat(tests)
+                    params.concat(tests)
                 );
 
                 casperChild.stdout.on('data', function (data) {
@@ -190,41 +199,6 @@ module.exports = function (options) {
                     resolve(code);
                 });
             });
-        },
-
-        /**
-        * When used --screenshots it will generate instrumented files that captures the
-        * screenshot of current state on every step. Useful for local debugging.
-        * Requires you to install casper-sumomner (npm install -g casper-summoner).
-        *
-        * @method createScreenshotFiles
-        * @param {String[]} tests array of paths to instrument
-        * @returns {String[]} array of paths to instrumented tests
-        */
-        createScreenshotFiles: function (tests) {
-            var instrumentedTests = tests;
-
-            if (argv && argv.screenshots) {
-                child_process.execSync('casper-summoner ' + tests.join(' '));
-                instrumentedTests = tests.map(function (file) {
-                    return file.replace('.js', '.summoned.js');
-                });
-            }
-
-            return instrumentedTests;
-        },
-
-        /**
-        * Cleans up instrunented tests
-        *
-        * @method removeScreenshotFiles
-        * @see createScreenshotFiles
-        * @param {String[]} tests array of paths to instrumented tests
-        */
-        removeScreenshotFiles: function (tests) {
-            if (argv && argv.screenshots) {
-                child_process.execSync('rm ' + tests.join(' '));
-            }
         }
     };
 
@@ -243,12 +217,9 @@ module.exports = function (options) {
                     return integrationTests.startServer(serverArgs)
                         .then(function (pid) {
                             serverPid = pid;
-                            tests = integrationTests.createScreenshotFiles(tests);
                         })
                         .then(function () {
-                            return integrationTests.runTests(tests).tap(function () {
-                                integrationTests.removeScreenshotFiles(tests);
-                            });
+                            return integrationTests.runTests(tests);
                         })
                         .then(function (exitCode) {
                             return new Promise(function (resolve, reject) {
