@@ -46,15 +46,17 @@ module.exports = function (casperjs, settings) {
                     .then(that.expandPageTree())
                     .then(function () {
                         var pageId;
+                        var pageNodeId;
                         var data = '';
                         var href = '';
 
                         if (opts && opts.title) {
                             pageId = that.getPageId(opts.title);
+                            pageNodeId = that.getPageNodeId(opts.title);
                         }
 
                         if (pageId) {
-                            data = '[data-id="' + pageId + '"]';
+                            data = '[data-node-id="' + pageNodeId + '"]';
                             href = '[href*="' + pageId + '"]';
                         }
 
@@ -117,11 +119,11 @@ module.exports = function (casperjs, settings) {
 
             return function () {
                 return this.then(function () {
-                    this.click('.js-cms-pagetree-options[data-id="' + opts.page + '"]');
+                    this.click('.js-cms-pagetree-options[data-node-id="' + opts.page + '"]');
                 })
                 .then(that.waitUntilActionsDropdownLoaded())
                 .then(function () {
-                    this.mouse.click('.js-cms-tree-item-copy[data-id="' + opts.page + '"]');
+                    this.mouse.click('.js-cms-tree-item-copy[data-node-id="' + opts.page + '"]');
                 })
                 .wait(100);
             };
@@ -140,11 +142,13 @@ module.exports = function (casperjs, settings) {
 
             return function () {
                 return this.then(function () {
-                    this.click('.js-cms-pagetree-options[data-id="' + opts.page + '"]');
+                    this.click('.js-cms-pagetree-options[data-node-id="' + opts.page + '"]');
                 })
                 .then(that.waitUntilActionsDropdownLoaded())
                 .then(function () {
-                    this.mouse.click('.js-cms-tree-item-copy[data-id="' + opts.page + '"] ~ .js-cms-tree-item-cut');
+                    this.mouse.click(
+                        '.js-cms-tree-item-copy[data-node-id="' + opts.page + '"] ~ .js-cms-tree-item-cut'
+                    );
                 })
                 .wait(100);
             };
@@ -163,11 +167,11 @@ module.exports = function (casperjs, settings) {
 
             return function () {
                 return this.then(function () {
-                    this.click('.js-cms-pagetree-options[data-id="' + opts.page + '"]');
+                    this.click('.js-cms-pagetree-options[data-node-id="' + opts.page + '"]');
                 })
                 .then(that.waitUntilActionsDropdownLoaded())
                 .then(function () {
-                    this.mouse.click('.js-cms-tree-item-paste[data-id="' + opts.page + '"]');
+                    this.mouse.click('.js-cms-tree-item-paste[data-node-id="' + opts.page + '"]');
                 })
                 .wait(100);
             };
@@ -193,10 +197,10 @@ module.exports = function (casperjs, settings) {
                         .then(that.waitUntilAllAjaxCallsFinish())
                         .then(that.expandPageTree())
                         .then(function () {
-                            var pageId = that.getPageId(opts.parent);
+                            var pageId = that.getPageNodeId(opts.parent);
 
                             // add nested page
-                            this.click('a[href*="/admin/cms/page/add/?target=' + pageId + '"]');
+                            this.click('a[href*="/admin/cms/page/add/?parent_node=' + pageId + '"]');
                         })
                         .waitForSelector('#page_form', function () {
                             this.sendKeys('#id_title', opts.title);
@@ -558,6 +562,17 @@ module.exports = function (casperjs, settings) {
         },
 
         /**
+         * Returns page nodeId. Page has to be visible in the page tree. See `expandPageTree`.
+         *
+         * @function getPageNodeId
+         * @param {String} title page title
+         * @returns {String|Boolean} page node id as a string or false if couldn't be found
+         */
+        getPageNodeId: function (title) {
+            return this._getPageNodeIds(title)[0];
+        },
+
+        /**
          * Returns pageIds of all the pages with same title.
          * Pages has to be visible in the page tree. See `expandPageTree`.
          *
@@ -575,6 +590,29 @@ module.exports = function (casperjs, settings) {
 
                     if (anchor.text().trim() === anchorTitle) {
                         return anchor.parent().data('id');
+                    }
+                }).toArray();
+            }, title);
+        },
+
+        /**
+         * Returns page nodeIds of all the pages with same title.
+         * Pages has to be visible in the page tree. See `expandPageTree`.
+         *
+         * @function _getPageNodeIds
+         * @private
+         * @param {String} title page title
+         * @returns {String[]|Boolean} page node ids as an array of strings or false if couldn't be found
+         */
+        _getPageNodeIds: function (title) {
+            // important to pass single param, because casper acts
+            // weirdly with single key objects https://github.com/n1k0/casperjs/issues/353
+            return casper.evaluate(function (anchorTitle) {
+                return CMS.$('.jstree-anchor').map(function () {
+                    var anchor = CMS.$(this);
+
+                    if (anchor.text().trim() === anchorTitle) {
+                        return anchor.parent().data('nodeId');
                     }
                 }).toArray();
             }, title);
@@ -689,7 +727,7 @@ module.exports = function (casperjs, settings) {
             }
             xpath += '[./span[contains(text(), "Paste")]]';
             if (opts && opts.pageId) {
-                xpath += '[contains(@data-id, "' + opts.pageId + '")]';
+                xpath += '[contains(@data-node-id, "' + opts.pageId + '")]';
             }
             return xpath;
         },
