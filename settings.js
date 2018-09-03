@@ -30,7 +30,8 @@ function configure(opts) {
         editOffUrl: 'http://localhost:' + port + '/en/?' + editOff,
         adminUrl: 'http://localhost:' + port + '/en/admin/login/',
         adminLogoutUrl: 'http://localhost:' + port + '/en/admin/logout/',
-        adminPagesUrl: 'http://localhost:' + port + '/en/admin/cms/page/',
+        adminPagesUrl: 'http://localhost:' + port + '/en/admin/cms/pagecontent/',
+        adminPageUrl: 'http://localhost:' + port + '/en/admin/cms/page/',
         adminUsersUrl: 'http://localhost:' + port + '/en/admin/auth/user/',
         port: port,
         credentials: {

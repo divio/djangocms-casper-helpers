@@ -200,7 +200,7 @@ module.exports = function (casperjs, settings) {
                             var pageId = that.getPageNodeId(opts.parent);
 
                             // add nested page
-                            this.click('a[href*="/admin/cms/page/add/?parent_node=' + pageId + '"]');
+                            this.click('a[href*="/admin/cms/pagecontent/add/?parent_node=' + pageId + '"]');
                         })
                         .waitForSelector('#page_form', function () {
                             this.sendKeys('#id_title', opts.title);
@@ -255,7 +255,7 @@ module.exports = function (casperjs, settings) {
                     .then(function () {
                         var pageId = that.getPageId(opts.page);
 
-                        this.thenOpen(globals.adminPagesUrl + pageId + '/advanced-settings/');
+                        this.thenOpen(globals.adminPageUrl + pageId + '/advanced-settings/');
                     })
                     .waitForSelector('#page_form', function () {
                         this.fill('#page_form', opts.fields, true);
@@ -356,6 +356,10 @@ module.exports = function (casperjs, settings) {
 
             return function () {
                 return this.then(that.waitUntilAllAjaxCallsFinish()).thenOpen(globals.editUrl)
+                    .then(function () {
+                        this.click('.cms-btn-switch-edit');
+                    })
+                    .wait(2000)
                     .then(that.switchTo('structure'))
                     .wait(100)
                     // only add to placeholder if no parent specified

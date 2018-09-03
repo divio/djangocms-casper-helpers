@@ -1,3 +1,8 @@
+==== 4.0.0 (2017-09-03) ====
+
+- Fixed things to work with CMS 4.0
+
+
 ==== 3.0.0 (2017-11-15) ====
 
 - Changed `addPage` / `removePage` in backwards incompatible way due to page
